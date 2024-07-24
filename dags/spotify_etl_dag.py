@@ -1,6 +1,8 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
+from airflow.utils.dates import days_ago
+
 import os
 
 from src.utils.utils import SpotifyAuthenticator, JSONHandler, CSVHandler, Path, DateTime
@@ -26,12 +28,13 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
-# Define the DAG
+# Define DAG
 dag = DAG(
     'spotify_etl',
     default_args=default_args,
-    description='A simple ETL process for Spotify data',
-    schedule_interval=timedelta(minutes=20),
+    description='Spotify Analytics ETL Pipeline',
+    schedule_interval='30 2 * * *',  # Runs daily at 2:30 AM UTC (8:00 AM IST)
+    start_date=days_ago(1),
     catchup=False  # Ensure the DAG does not backfill missing runs
 )
 
@@ -51,17 +54,18 @@ def extractor():
     genres = genre_list['genres']
 
     layer = 'staging-layer'
-    data_dir = "D:\\Data-Engineer\\de-projects\\spotify\\dags\\data"
+    data_dir = '/opt/airflow/dags/data'
 
     raw_data_path = Path.make_dir(
         data_dir, layer, folder_name=DateTime.get_today_date())
+    print(raw_data_path)
 
     extractor = Extract()
     extractor.fetch_and_save_data(genres, raw_data_path)
 
 def transformer():
     layer = 'staging-layer'
-    data_dir = "D:\\Data-Engineer\\de-projects\\spotify\\dags\\data"
+    data_dir = '/opt/airflow/dags/data'
 
     try:
         today_path = Path.join_path(data_dir, layer,
@@ -96,10 +100,10 @@ def transformer():
         table_names.append(table_name)
 
         postgres_handler = DataModeler(
-            sql_directory=r'D:\Data-Engineer\de-projects\spotify\dags\sql\core-queries',
+            sql_directory='/opt/airflow/dags/sql/core-queries',
             user='postgres',
             password=os.getenv('POSTGRES_DB_PASSWORD'),
-            host='localhost',
+            host='host.docker.internal',
             port='5432',
             database='DataWarehouse'
         )
@@ -125,7 +129,7 @@ def data_processor():
 
     data_reader = DataReader(database='DataWarehouse')
     data = data_reader.read_data_from_db(
-        table='spotify_tracks_' + DateTime.get_today_date(), schema='core')
+        table='spotify_tracks',  schema='core')
     if data.empty:
         raise DataReadingError("Data not read from core layer.")
     print("Data read from core layer.")
@@ -146,7 +150,7 @@ def data_processor():
     dataframe_names = ['albums', 'artists', 'tracks', 'track_artists']
 
     layer = 'consumption-layer'
-    data_dir = "D:\\Data-Engineer\\de-projects\\spotify\\dags\\data"
+    data_dir = '/opt/airflow/dags/data'
 
     # Define the base directory for saving CSV files
     base_file_path = Path.make_dir(
@@ -188,7 +192,7 @@ def data_processor():
         db_modeler = DataModeler(
             user='postgres',
             password=os.getenv('POSTGRES_DB_PASSWORD'),
-            host='localhost',
+            host='host.docker.internal',
             port='5432',
             database='DataWarehouse'
         )

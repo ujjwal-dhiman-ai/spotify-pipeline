@@ -122,7 +122,7 @@ if __name__ == "__main__":
     genres = genre_list['genres']
     
     layer = 'staging-layer'
-    data_dir = "D:\\Data-Engineer\\de-projects\\spotify\\dags\\data"
+    data_dir = '/opt/airflow/dags/data'
     
     raw_data_path = Path.make_dir(
         data_dir, layer, folder_name=DateTime.get_today_date())

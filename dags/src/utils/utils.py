@@ -27,8 +27,6 @@ class SpotifyAuthenticator:
             'client_secret': self.client_secret
         }
 
-        print(self.token_url)
-        print(payload)
         response = requests.post(
             self.token_url, headers=self.headers, data=payload)
 

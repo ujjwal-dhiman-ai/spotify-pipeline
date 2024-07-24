@@ -18,7 +18,7 @@ class DataProcessor:
         self.db_handler = PostgresHandler(
             user='postgres',
             password=os.getenv('POSTGRES_DB_PASSWORD'),
-            host='localhost',
+            host='host.docker.internal',
             port='5432',
             database='DataWarehouse'
         )
@@ -94,7 +94,7 @@ class DataReader:
         self.db_handler = PostgresHandler(
             user='postgres',
             password=os.getenv('POSTGRES_DB_PASSWORD'),
-            host='localhost',
+            host='host.docker.internal',
             port='5432',
             database=database
         )
@@ -151,7 +151,7 @@ if __name__ == "__main__":
     dataframe_names = ['albums', 'artists', 'tracks', 'track_artists']
 
     layer = 'consumption-layer'
-    data_dir = "D:\\Data-Engineer\\de-projects\\spotify\\dags\\data"
+    data_dir = '/opt/airflow/dags/data'
     
     # Define the base directory for saving CSV files
     base_file_path = Path.make_dir(data_dir, layer,folder_name=DateTime.get_today_date())

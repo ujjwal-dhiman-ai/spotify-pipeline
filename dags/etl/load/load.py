@@ -35,7 +35,7 @@ class PostgresHandler:
     def create_postgresql_connection_string(self, **kwargs):
         user = kwargs.get('user', 'postgres')
         password = kwargs.get('password', 'password')
-        host = kwargs.get('host', 'localhost')
+        host = kwargs.get('host', 'host.docker.internal')
         port = kwargs.get('port', '5432')
         database = kwargs.get('database', 'postgres')
 
@@ -215,7 +215,7 @@ class PostgresHandler:
 
 
 class DataModeler(PostgresHandler):      
-    def __init__(self, sql_directory=r'D:\Data-Engineer\de-projects\spotify\dags\sql\schema-queries', **kwargs):
+    def __init__(self, sql_directory='/opt/airflow/dags/sql/schema-queries', **kwargs):
         super().__init__(**kwargs)
         self.sql_directory = sql_directory
 

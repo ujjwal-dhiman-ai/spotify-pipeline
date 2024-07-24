@@ -61,8 +61,7 @@ class Transform:
         combined_df = self.consolidator.consolidate()
         combined_df['id'] = range(1, len(combined_df) + 1)
         # Reorder columns to have 'id' in the first position
-        combined_df = combined_df[['id'] +
-                                  [col for col in combined_df.columns if col != 'id']]
+        combined_df = combined_df[['id'] + [col for col in combined_df.columns if col != 'id']]
         return combined_df
     
         
@@ -74,7 +73,7 @@ if __name__ == "__main__":
     Finally it store the relevant and transformed data in core layer.
     """
     layer = 'staging-layer'
-    data_dir = "D:\\Data-Engineer\\de-projects\\spotify\\dags\\data"
+    data_dir = '/opt/airflow/dags/data'
 
     
     try:
@@ -108,7 +107,7 @@ if __name__ == "__main__":
             table_names.append(table_name)
             
             postgres_handler = DataModeler(
-                sql_directory=r'D:\Data-Engineer\de-projects\spotify\dags\sql\core-queries',
+                sql_directory='/opt/airflow/dags/sql/core-queries',
                 user='postgres',
                 password=os.getenv('POSTGRES_DB_PASSWORD'),
                 host='localhost',
