@@ -168,15 +168,15 @@ def data_processor():
             'file_path': os.path.join(base_file_path, f"{dataframe_names[0]}.csv")
         },
         dataframe_names[1]: {
-            'table': normalized_tables[0],
+            'table': normalized_tables[1],
             'file_path': os.path.join(base_file_path, f"{dataframe_names[1]}.csv")
         },
         dataframe_names[2]: {
-            'table': normalized_tables[0],
+            'table': normalized_tables[2],
             'file_path': os.path.join(base_file_path, f"{dataframe_names[2]}.csv")
         },
         dataframe_names[3]: {
-            'table': normalized_tables[0],
+            'table': normalized_tables[3],
             'file_path': os.path.join(base_file_path, f"{dataframe_names[3]}.csv")
         }
     }
@@ -219,7 +219,7 @@ def data_processor():
 
     
 # Define the tasks
-get_access_token = PythonOperator(
+get_access_token = PythonOperator( 
     task_id='get_access_token',
     python_callable=authenticator,
     dag=dag

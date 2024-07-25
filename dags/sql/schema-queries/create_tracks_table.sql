@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS consumption.tracks (
                 popularity INT,
                 track_id TEXT NOT NULL,
                 duration_ms INT,
+                genre TEXT,
                 album_id INT,
                 FOREIGN KEY (album_id) REFERENCES consumption.albums (album_id)
             );

@@ -280,17 +280,18 @@ class DataModeler(PostgresHandler):
             print(f"Error checking if table exists: {e}")
             return False
 
-    def create_tables(self, table_name=None):
+    def create_tables(self, new_table_name=None):
         # List all .sql files in the specified directory
         sql_files = [f for f in os.listdir(
             self.sql_directory) if f.endswith('.sql')]
 
         for sql_file in sql_files:
-            query = self._read_sql_file(sql_file)
-            if table_name:
-                # Replace table name in query if provided
-                query = self._replace_table_name_in_query(query, table_name)
+            query = self._read_sql_file(sql_file) 
             table_name, schema = self.extract_table_name_from_query(query)
+            if new_table_name:
+                # Replace table name in query if provided
+                query = self._replace_table_name_in_query(query, new_table_name)
+            
             if self.table_exists(table_name=table_name, schema=schema):
                 print(f"Table {table_name} already exists.")
                 continue
@@ -433,12 +434,9 @@ class DataModeler(PostgresHandler):
                 if self.is_bridge_table(table_name):
                     # Perform the delete-and-insert operation for bridge tables
                     delete_query = f"""
-                    DELETE FROM {schema}.{table_name}
-                    USING {temp_table_name}
-                    WHERE {schema}.{table_name}.{primary_keys[0]} = {temp_table_name}.{primary_keys[0]}
-                    AND {schema}.{table_name}.{primary_keys[1]} = {temp_table_name}.{primary_keys[1]}
-                    AND {schema}.{table_name}.{primary_keys[2]} = {temp_table_name}.{primary_keys[2]};
+                    TRUNCATE TABLE {schema}.{table_name}
                     """
+                    
                     self.cursor.execute(delete_query)
 
                     insert_query = f"""

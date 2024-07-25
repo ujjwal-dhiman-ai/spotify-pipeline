@@ -53,7 +53,7 @@ class DataProcessor:
         # Create final dataframe of normalized tables
         self.track_artists = self.track_artists[['uid', 'id', 'artist_id']]
         self.tracks = self.tracks[[
-            'id', 'track_name', 'popularity', 'track_id', 'duration_ms', 'album_id']]
+            'id', 'track_name', 'popularity', 'track_id', 'duration_ms', 'genre', 'album_id']]
         self.albums = self.albums[[
             'album_id', 'album_name', 'release_date', 'total_tracks']]
         self.artists = self.artists[[
@@ -154,7 +154,7 @@ if __name__ == "__main__":
     data_dir = '/opt/airflow/dags/data'
     
     # Define the base directory for saving CSV files
-    base_file_path = Path.make_dir(data_dir, layer,folder_name=DateTime.get_today_date())
+    base_file_path = Path.make_dir(data_dir, layer, folder_name=DateTime.get_today_date())
 
     # Create a dictionary of file paths based on dataframe names
     file_paths = {
@@ -168,15 +168,15 @@ if __name__ == "__main__":
             'file_path': os.path.join(base_file_path, f"{dataframe_names[0]}.csv")
         },
         dataframe_names[1]: {
-            'table': normalized_tables[0],
+            'table': normalized_tables[1],
             'file_path': os.path.join(base_file_path, f"{dataframe_names[1]}.csv")
         },
         dataframe_names[2]: {
-            'table': normalized_tables[0],
+            'table': normalized_tables[2],
             'file_path': os.path.join(base_file_path, f"{dataframe_names[2]}.csv")
         },
         dataframe_names[3]: {
-            'table': normalized_tables[0],
+            'table': normalized_tables[3],
             'file_path': os.path.join(base_file_path, f"{dataframe_names[3]}.csv")
         }
     }
