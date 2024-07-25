@@ -39,6 +39,16 @@ dag = DAG(
 )
 
 def authenticator():
+    """
+    Authenticate with Spotify API and generate access token.
+
+    Returns:
+        None
+
+    Example:
+        >>> authenticator()
+        Access token generated: <access_token>
+    """
     spotify_auth = SpotifyAuthenticator()
     access_token = spotify_auth.get_access_token()
 
@@ -48,6 +58,16 @@ def authenticator():
         print("Failed to generate access token.")
         
 def extractor():
+    """
+    Extract data from Spotify API.
+
+    Returns:
+        None
+
+    Example:
+        >>> extractor()
+        Data extracted and saved to /opt/airflow/dags/data/staging-layer/<today_date>
+    """
     genre_list_path = '/opt/airflow/dags/src/utils/genre.json'
 
     genre_list = JSONHandler.read_json_from_file(genre_list_path)
@@ -64,6 +84,16 @@ def extractor():
     extractor.fetch_and_save_data(genres, raw_data_path)
 
 def transformer():
+    """
+    Transform extracted data.
+
+    Returns:
+        None
+
+    Example:
+        >>> transformer()
+        Data transformed and saved to /opt/airflow/dags/data/core-layer/<today_date>
+    """
     layer = 'staging-layer'
     data_dir = '/opt/airflow/dags/data'
 
@@ -123,8 +153,15 @@ def transformer():
             postgres_handler.disconnect()
 
 def data_processor():
-    """ 
-    Read data from core layer in database
+    """
+    Process data from core layer.
+
+    Returns:
+        None
+
+    Example:
+        >>> data_processor()
+        Data processed and saved to /opt/airflow/dags/data/consumption-layer/<today_date>
     """
 
     data_reader = DataReader(database='DataWarehouse')
